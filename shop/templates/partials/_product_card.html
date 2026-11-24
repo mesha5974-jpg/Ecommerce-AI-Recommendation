@@ -1,0 +1,32 @@
+{% load store_extras %}{% with img=product.main_image alt=product.hover_image %}
+<article class="product-card" data-reveal>
+  <div class="pc-media">
+    <a href="{{ product.get_absolute_url }}" tabindex="-1" aria-hidden="true" style="position:absolute;inset:0;display:block">
+      {% if img %}<img src="{{ img.url }}" alt="" loading="lazy" width="600" height="600">{% endif %}
+      {% if alt %}<img class="pc-alt" src="{{ alt.url }}" alt="" loading="lazy" width="600" height="600">{% endif %}
+    </a>
+    <div class="pc-badges">
+      {% if not product.in_stock %}<span class="badge badge-out">Sold out</span>
+      {% elif product.on_sale %}<span class="badge badge-sale">−{{ product.discount_percent }}%</span>
+      {% elif product.is_new %}<span class="badge">New</span>{% endif %}
+    </div>
+    <form class="wish-form" method="post" action="{% url 'store:wishlist_toggle' product.pk %}" data-wishlist-form data-product-id="{{ product.pk }}">
+      {% csrf_token %}
+      {% with active=product.pk|in_set:wishlist_ids %}
+      <button class="wish-btn{% if active %} is-active{% endif %}" type="submit" data-wish aria-pressed="{% if active %}true{% else %}false{% endif %}" aria-label="Toggle wishlist for {{ product.name }}">
+        <svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg>
+      </button>
+      {% endwith %}
+    </form>
+  </div>
+  <div class="pc-body">
+    <p class="pc-brand">{{ product.brand.name }}</p>
+    <h3 class="pc-name"><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
+    {% if product.rating_count %}<div class="rating-line">{% include "partials/_stars.html" with rating=product.rating_avg %}<span>({{ product.rating_count }})</span></div>{% endif %}
+    <p class="pc-price">
+      <span class="price-now">{{ product.effective_price|money }}</span>
+      {% if product.on_sale %}<span class="price-was">{{ product.price|money }}</span>{% endif %}
+    </p>
+  </div>
+</article>
+{% endwith %}

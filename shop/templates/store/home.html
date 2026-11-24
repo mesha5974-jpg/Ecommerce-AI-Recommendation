@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load static store_extras %}
+{% block content %}
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-media"><img src="{{ MEDIA_URL }}site/hero.jpg" alt="" fetchpriority="high"></div>
+  <div class="container hero-inner">
+    <span class="eyebrow">The New Season</span>
+    <h1 id="hero-title">TIMELESS ELEGANCE. <em>MODERN LUXURY.</em></h1>
+    <p class="lead">Discover exceptional watches, fashion, and accessories crafted for your lifestyle.</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="{% url 'store:shop' %}">Shop Now</a>
+      <a class="btn btn-outline" href="#collections">Explore Collections</a>
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="cat-title">
+  <div class="container">
+    <div class="section-head center">
+      <span class="eyebrow">Featured Categories</span>
+      <h2 id="cat-title">Find Your Signature</h2>
+    </div>
+    <div class="cat-grid">
+      {% for c in categories %}
+      <a class="cat-tile" href="{{ c.get_absolute_url }}" data-reveal>
+        {% if c.image %}<img src="{{ c.image.url }}" alt="" loading="lazy" width="600" height="450">{% endif %}
+        <div class="cat-label"><h3>{{ c.name }}</h3><span>{{ c.tagline }}</span></div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section alt" aria-labelledby="best-title">
+  <div class="container">
+    <div class="section-head">
+      <div><span class="eyebrow">Best Sellers</span><h2 id="best-title">Most Coveted</h2></div>
+      <a class="link-arrow" href="{% url 'store:shop' %}?sort=popular">View all <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+    </div>
+    <div class="grid-products cols-4">
+      {% for product in bestsellers %}{% include "partials/_product_card.html" %}{% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="promo" aria-labelledby="promo-title">
+  <img src="{{ MEDIA_URL }}site/promo.jpg" alt="" loading="lazy">
+  <div class="container"><div class="promo-inner">
+    <span class="tag">Seasonal Offer</span>
+    <h2 id="promo-title">Up to 25% off selected pieces</h2>
+    <p>A curated edit of watches, leather goods and eyewear, reduced for a limited time.</p>
+    <a class="btn btn-primary" href="{% url 'store:shop' %}?on_sale=1">Shop the Sale</a>
+  </div></div>
+</section>
+
+<section class="section" aria-labelledby="new-title">
+  <div class="container">
+    <div class="section-head">
+      <div><span class="eyebrow">New Arrivals</span><h2 id="new-title">Just Landed</h2></div>
+      <a class="link-arrow" href="{% url 'store:shop' %}?sort=newest">View all <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+    </div>
+    <div class="grid-products cols-4">
+      {% for product in new_arrivals %}{% include "partials/_product_card.html" %}{% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section alt" id="collections" aria-labelledby="col-title">
+  <div class="container">
+    <div class="section-head center">
+      <span class="eyebrow">Exclusive Collections</span>
+      <h2 id="col-title">Curated Edits</h2>
+      <p>Hand-picked groupings from our style team.</p>
+    </div>
+    <div class="collections">
+      {% for col in collections %}
+      <a class="collection-tile" href="{{ col.get_absolute_url }}" data-reveal>
+        {% if col.image %}<img src="{{ col.image.url }}" alt="" loading="lazy" width="600" height="750">{% endif %}
+        <div class="collection-copy"><h3>{{ col.name }}</h3><p>{{ col.description }}</p><span class="link-arrow">Explore <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span></div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="testi-title">
+  <div class="container">
+    <div class="section-head center"><span class="eyebrow">Testimonials</span><h2 id="testi-title">Loved by Our Clients</h2></div>
+    <div class="testimonials">
+      {% for t in testimonials %}
+      <figure class="testimonial" data-reveal style="margin:0">
+        <div class="stars" aria-label="5 out of 5">{% for i in "12345" %}<svg class="icon" aria-hidden="true"><use href="#i-star"/></svg>{% endfor %}</div>
+        <blockquote>{{ t.quote }}</blockquote>
+        <footer><div><strong>{{ t.name }}</strong>Verified buyer</div><span>{{ t.detail }}</span></footer>
+      </figure>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section newsletter" aria-labelledby="news-title">
+  <div class="container container-narrow">
+    <span class="eyebrow">The Inner Circle</span>
+    <h2 id="news-title">Be the first to know</h2>
+    <p class="text-muted">New arrivals, private sales and styling notes — delivered sparingly.</p>
+    <form class="newsletter-form" method="post" action="{% url 'store:newsletter' %}" data-newsletter novalidate>
+      {% csrf_token %}
+      <label class="sr-only" for="nl-email">Email address</label>
+      <input id="nl-email" type="email" name="email" placeholder="Your email address" autocomplete="email" required>
+      <button class="btn btn-primary" type="submit">Subscribe</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

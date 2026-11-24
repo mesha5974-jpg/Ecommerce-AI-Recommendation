@@ -52,6 +52,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "store.context_processors.storefront",
             ],
         },
     },
@@ -100,6 +101,17 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
+# --- Storefront business settings -----------------------------------------
+STORE_NAME = "AURELIA"
+CURRENCY_SYMBOL = "$"
+SHIPPING_FLAT_RATE = 15          # charged below the free-shipping threshold
+FREE_SHIPPING_THRESHOLD = 500
+MAX_CART_LINE_QTY = 10
+PRODUCTS_PER_PAGE = 12
+BANK_TRANSFER_INSTRUCTIONS = (
+    "Transfer the order total to the account details we email you after placing the order. "
+    "Your order ships once payment is confirmed."
+)
 
 
 # Static files (CSS, JavaScript, Images)

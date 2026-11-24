@@ -1,0 +1,80 @@
+{% load store_extras %}
+{% url 'store:shop' as shop_url %}
+<div class="announce" role="note">
+  <span>Complimentary shipping over {{ FREE_SHIPPING_THRESHOLD|money }}</span><span class="a-secondary">14-day returns</span><span class="a-secondary">2-year warranty on watches</span>
+</div>
+<header class="site-header">
+  <div class="container header-inner">
+    <button class="icon-btn nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav" data-open-panel="mobile-nav" data-nav-toggle>
+      <svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg>
+    </button>
+    <a class="brand" href="{% url 'store:home' %}" aria-label="{{ STORE_NAME }} home">{{ STORE_NAME }}</a>
+
+    <nav class="primary-nav" aria-label="Primary">
+      <a href="{{ shop_url }}" {% if request.path == shop_url %}aria-current="page"{% endif %}>Shop</a>
+      <div class="has-menu">
+        <button class="menu-trigger" type="button" aria-haspopup="true">Categories <svg class="icon" aria-hidden="true"><use href="#i-chevron-down"/></svg></button>
+        <div class="menu-panel">
+          {% for c in nav_categories %}<a href="{{ c.get_absolute_url }}">{{ c.name }}</a>{% endfor %}
+        </div>
+      </div>
+      <a href="{{ shop_url }}?sort=newest">New In</a>
+      <a href="{% url 'store:about' %}" {% if request.path == '/about/' %}aria-current="page"{% endif %}>Our Story</a>
+      <a href="{% url 'store:contact' %}" {% if request.path == '/contact/' %}aria-current="page"{% endif %}>Contact</a>
+      <a class="nav-sale" href="{{ shop_url }}?on_sale=1">Sale</a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="icon-btn" type="button" aria-label="Search" aria-expanded="false" aria-controls="search-bar" data-search-toggle><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg></button>
+      {% if user.is_authenticated %}
+        <a class="icon-btn hide-sm" href="{% url 'accounts:profile' %}" aria-label="My account"><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg></a>
+      {% else %}
+        <a class="icon-btn hide-sm" href="{% url 'accounts:login' %}" aria-label="Sign in"><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg></a>
+      {% endif %}
+      <a class="icon-btn" href="{% url 'store:wishlist' %}" aria-label="Wishlist">
+        <svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg>
+        <span class="badge-count" data-wishlist-count data-zero="{% if wishlist_ids %}false{% else %}true{% endif %}">{{ wishlist_ids|length }}</span>
+      </a>
+      <button class="icon-btn" type="button" aria-label="Open cart" data-open-panel="cart-drawer">
+        <svg class="icon" aria-hidden="true"><use href="#i-bag"/></svg>
+        <span class="badge-count" data-cart-count data-zero="{% if cart_count %}false{% else %}true{% endif %}">{{ cart_count }}</span>
+      </button>
+    </div>
+  </div>
+  <div class="search-bar" id="search-bar">
+    <div class="container">
+      <form action="{{ shop_url }}" method="get" role="search" data-no-loading>
+        <label class="sr-only" for="header-search">Search products</label>
+        <input id="header-search" type="search" name="q" placeholder="Search watches, fashion, jewelry…" autocomplete="off" maxlength="80" required>
+        <button class="btn btn-primary btn-sm" type="submit">Search</button>
+      </form>
+    </div>
+  </div>
+</header>
+
+<aside class="drawer drawer-left" id="mobile-nav" aria-hidden="true" aria-label="Menu">
+  <div class="drawer-head">
+    <span class="brand" style="padding-left:0;font-size:1.2rem">{{ STORE_NAME }}</span>
+    <button class="icon-btn" type="button" aria-label="Close menu" data-close-panel><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+  </div>
+  <nav class="drawer-body mobile-nav" aria-label="Mobile">
+    <a href="{{ shop_url }}">Shop All</a>
+    <a href="{{ shop_url }}?sort=newest">New In</a>
+    <a class="nav-sale" href="{{ shop_url }}?on_sale=1">Sale</a>
+    <h3>Categories</h3>
+    <div class="sub">{% for c in nav_categories %}<a href="{{ c.get_absolute_url }}">{{ c.name }}</a>{% endfor %}</div>
+    <h3>Account</h3>
+    {% if user.is_authenticated %}
+      <a href="{% url 'accounts:profile' %}">My Account</a>
+      <a href="{% url 'orders:list' %}">Order History</a>
+      <form method="post" action="{% url 'accounts:logout' %}" data-no-loading>{% csrf_token %}<button type="submit" class="line-remove" style="font-size:.9rem;padding:.9rem 0">Sign out</button></form>
+    {% else %}
+      <a href="{% url 'accounts:login' %}">Sign In</a>
+      <a href="{% url 'accounts:register' %}">Create Account</a>
+    {% endif %}
+    <h3>Maison</h3>
+    <a href="{% url 'store:about' %}">Our Story</a>
+    <a href="{% url 'store:contact' %}">Contact</a>
+    <a href="{% url 'store:faq' %}">FAQ</a>
+  </nav>
+</aside>

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Page not found{% endblock %}
+{% block body_class %}theme-light{% endblock %}
+
+{% block content %}
+<div class="container error-page">
+  <p class="code">404</p>
+  <h1>This page has gone missing</h1>
+  <p class="text-muted">The page you are looking for may have moved or no longer exists.</p>
+  <p><a class="btn btn-primary" href="{% url 'store:home' %}">Back to home</a> <a class="btn btn-outline" href="{% url 'store:shop' %}">Browse the shop</a></p>
+</div>
+{% endblock %}

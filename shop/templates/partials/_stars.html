@@ -1,0 +1,1 @@
+{% load store_extras %}<span class="stars" role="img" aria-label="Rated {{ rating|default:0 }} out of 5">{% for s in rating|stars %}<svg class="icon {{ s }}" aria-hidden="true"><use href="#i-star"/></svg>{% endfor %}</span>

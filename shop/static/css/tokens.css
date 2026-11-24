@@ -1,0 +1,60 @@
+/* ==========================================================================
+   AURELIA design tokens — the only place raw brand colours are declared.
+   ========================================================================== */
+:root {
+  /* Brand palette (exact spec values) */
+  --orange: #F97316;
+  --black: #0B0B0B;
+  --charcoal: #1C1C1C;
+  --charcoal-2: #292929;
+  --gold: #D4AF37;
+  --gold-soft: #E5C76B;
+  --white: #FFFFFF;
+  --paper: #F5F3EF;
+
+  /* Semantic tokens — dark theme (default) */
+  --bg: var(--black);
+  --surface: var(--charcoal);
+  --surface-2: var(--charcoal-2);
+  --text: var(--white);
+  --text-muted: rgba(255, 255, 255, 0.68);
+  --border: rgba(212, 175, 55, 0.24);
+  --border-strong: rgba(212, 175, 55, 0.6);
+  --accent: var(--gold);
+  --on-orange: var(--black);
+  --field-bg: var(--charcoal-2);
+
+  /* Typography */
+  --font-display: "Playfair Display", "Times New Roman", serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Spacing / shape */
+  --gutter: 16px;
+  --radius: 2px;
+  --container: 1280px;
+  --header-h: 72px;
+
+  /* Motion */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --t-fast: 160ms;
+  --t-med: 320ms;
+  --shadow-gold: 0 18px 40px -22px rgba(212, 175, 55, 0.45);
+  --shadow-deep: 0 24px 60px -28px rgba(0, 0, 0, 0.75);
+}
+
+/* Light surfaces for form-heavy and long-form reading pages */
+.theme-light {
+  --bg: var(--paper);
+  --surface: var(--white);
+  --surface-2: #EDEAE3;
+  --text: var(--charcoal);
+  --text-muted: #5E5A52;
+  --border: rgba(11, 11, 11, 0.12);
+  --border-strong: rgba(11, 11, 11, 0.45);
+  --accent: var(--charcoal);
+  --field-bg: var(--white);
+}
+
+@media (min-width: 768px) {
+  :root { --gutter: 28px; --header-h: 84px; }
+}

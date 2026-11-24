@@ -1,0 +1,38 @@
+{% load store_extras %}
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-perks">
+      <div class="perk"><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg><div><strong>Complimentary shipping</strong><span>On orders over {{ FREE_SHIPPING_THRESHOLD|money }}</span></div></div>
+      <div class="perk"><svg class="icon" aria-hidden="true"><use href="#i-return"/></svg><div><strong>14-day returns</strong><span>Unworn, in original packaging</span></div></div>
+      <div class="perk"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg><div><strong>Authenticity guaranteed</strong><span>2-year warranty on timepieces</span></div></div>
+    </div>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="{% url 'store:home' %}">{{ STORE_NAME }}</a>
+        <p>Exceptional watches, fashion and accessories, curated for a life well lived.</p>
+      </div>
+      <div class="footer-col">
+        <h3>Shop</h3>
+        {% for c in nav_categories|slice:":5" %}<a href="{{ c.get_absolute_url }}">{{ c.name }}</a>{% endfor %}
+        <a href="{% url 'store:shop' %}">All products</a>
+      </div>
+      <div class="footer-col">
+        <h3>Customer Care</h3>
+        <a href="{% url 'store:contact' %}">Contact us</a>
+        <a href="{% url 'store:faq' %}">FAQ</a>
+        <a href="{% url 'orders:list' %}">Order history</a>
+        <a href="{% url 'store:wishlist' %}">Wishlist</a>
+      </div>
+      <div class="footer-col">
+        <h3>Maison</h3>
+        <a href="{% url 'store:about' %}">Our story</a>
+        <a href="{% url 'store:privacy' %}">Privacy policy</a>
+        <a href="{% url 'store:terms' %}">Terms &amp; conditions</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; {% now "Y" %} {{ STORE_NAME }}. All rights reserved.</span>
+      <span>Cash on delivery &middot; Bank transfer</span>
+    </div>
+  </div>
+</footer>
