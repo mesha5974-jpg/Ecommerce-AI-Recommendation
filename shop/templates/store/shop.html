@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% load static store_extras %}
+{% block title %}{% if active_collection %}{{ active_collection.name }}{% elif query %}Search: {{ query }}{% else %}Shop{% endif %}{% endblock %}
+{% block body_class %}theme-light{% endblock %}
+
+{% block content %}
+<section class="page-head">
+  <div class="container">
+    <span class="eyebrow">{% if active_collection %}Collection{% else %}The Collection{% endif %}</span>
+    <h1>{% if active_collection %}{{ active_collection.name }}{% elif query %}Results for &ldquo;{{ query }}&rdquo;{% else %}All Pieces{% endif %}</h1>
+    <p>{% if active_collection and active_collection.description %}{{ active_collection.description }}{% else %}Watches, fashion and accessories — refined, durable and made to last.{% endif %}</p>
+  </div>
+</section>
+
+<div class="container shop">
+  <aside class="filters" id="filters" aria-label="Filters">
+    <form id="filter-form" method="get" action="{% url 'store:shop' %}">
+      <div class="filters-head">
+        <h2>Filters</h2>
+        <button class="icon-btn close-filters" type="button" aria-label="Close filters" data-close-panel><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+      </div>
+
+      {% if active_collection %}<input type="hidden" name="collection" value="{{ active_collection.slug }}">{% endif %}
+
+      <div class="filter-group">
+        <h3>Search</h3>
+        <label class="sr-only" for="shop-q">Search products</label>
+        <input class="input" id="shop-q" type="search" name="q" value="{{ query }}" placeholder="Search products…" maxlength="80">
+      </div>
+
+      <div class="filter-group">
+        <h3>Category</h3>
+        {% for c in categories %}
+        <label class="check"><input type="checkbox" name="category" value="{{ c.slug }}" {% if c.slug in selected_categories %}checked{% endif %}> {{ c.name }}</label>
+        {% endfor %}
+      </div>
+
+      <div class="filter-group">
+        <h3>Brand</h3>
+        {% for b in brands %}
+        <label class="check"><input type="checkbox" name="brand" value="{{ b.slug }}" {% if b.slug in selected_brands %}checked{% endif %}> {{ b.name }}</label>
+        {% endfor %}
+      </div>
+
+      <div class="filter-group">
+        <h3>Price ({{ CURRENCY }})</h3>
+        <div class="price-inputs">
+          <input type="number" name="min_price" min="0" step="1" inputmode="numeric" placeholder="{{ price_floor }}" value="{{ min_price }}" aria-label="Minimum price">
+          <span aria-hidden="true">&ndash;</span>
+          <input type="number" name="max_price" min="0" step="1" inputmode="numeric" placeholder="{{ price_ceiling }}" value="{{ max_price }}" aria-label="Maximum price">
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <h3>Rating</h3>
+        <label class="check"><input type="radio" name="rating" value="" {% if not min_rating %}checked{% endif %}> Any rating</label>
+        {% for r in "432" %}
+        <label class="check"><input type="radio" name="rating" value="{{ r }}" {% if min_rating == r %}checked{% endif %}>
+          <span class="stars" aria-hidden="true">{% for i in "12345" %}<svg class="icon {% if i <= r %}full{% else %}empty{% endif %}"><use href="#i-star"/></svg>{% endfor %}</span> &amp; up</label>
+        {% endfor %}
+      </div>
+
+      <div class="filter-group">
+        <h3>Availability</h3>
+        <label class="check"><input type="checkbox" name="in_stock" value="1" {% if request.GET.in_stock %}checked{% endif %}> In stock only</label>
+        <label class="check"><input type="checkbox" name="on_sale" value="1" {% if request.GET.on_sale %}checked{% endif %}> On sale</label>
+      </div>
+
+      <button class="btn btn-dark btn-block" type="submit">Apply filters</button>
+      {% if has_filters %}<a class="btn btn-outline btn-block" style="margin-top:.6rem" href="{% url 'store:shop' %}">Reset all</a>{% endif %}
+    </form>
+  </aside>
+
+  <section aria-label="Products">
+    <div class="toolbar">
+      <p class="count" role="status">{{ total }} piece{{ total|pluralize }}</p>
+      <div class="toolbar-actions">
+        <button class="btn btn-outline btn-sm filter-toggle" type="button" data-open-panel="filters"><svg class="icon" aria-hidden="true"><use href="#i-filter"/></svg> Filters</button>
+        <label class="sr-only" for="sort">Sort by</label>
+        <select id="sort" name="sort" form="filter-form">
+          {% for key, label in sorts %}<option value="{{ key }}" {% if key == sort %}selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+    </div>
+
+    {% if has_filters %}
+    <div class="active-filters chips" aria-label="Active filters">
+      {% if query %}<a class="chip" href="{% query_without 'q' 'page' %}" aria-label="Remove search filter">&ldquo;{{ query }}&rdquo; <svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></a>{% endif %}
+      {% for key, value, label in chips %}
+        <a class="chip" href="{% query_remove_value key value %}" aria-label="Remove filter {{ label }}">{{ label }} <svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></a>
+      {% endfor %}
+      {% if price_chip %}<a class="chip" href="{% query_without 'min_price' 'max_price' 'page' %}" aria-label="Remove price filter">{% if min_price %}{{ CURRENCY }}{{ min_price }}{% else %}Any{% endif %} &ndash; {% if max_price %}{{ CURRENCY }}{{ max_price }}{% else %}Any{% endif %} <svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></a>{% endif %}
+      <a class="chip-clear" href="{% url 'store:shop' %}">Clear all</a>
+    </div>
+    {% endif %}
+
+    <div id="product-grid">
+    {% if products %}
+      <div class="grid-products">
+        {% for product in products %}{% include "partials/_product_card.html" %}{% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+        <h2>No pieces found</h2>
+        <p>We couldn&rsquo;t find anything matching your filters. Try widening your search or clearing a filter.</p>
+        <a class="btn btn-primary" href="{% url 'store:shop' %}">View all products</a>
+      </div>
+    {% endif %}
+    </div>
+
+    {% if page.has_other_pages %}
+    <nav class="pagination" aria-label="Pagination">
+      {% if page.has_previous %}<a href="{% query_without 'page' page=page.previous_page_number %}" rel="prev">Prev</a>{% else %}<span class="disabled">Prev</span>{% endif %}
+      {% for n in page.paginator.page_range %}
+        {% if n == page.number %}<span class="current" aria-current="page">{{ n }}</span>{% else %}<a href="{% query_without 'page' page=n %}">{{ n }}</a>{% endif %}
+      {% endfor %}
+      {% if page.has_next %}<a href="{% query_without 'page' page=page.next_page_number %}" rel="next">Next</a>{% else %}<span class="disabled">Next</span>{% endif %}
+    </nav>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}<script src="{% static 'js/shop.js' %}"></script>{% endblock %}
